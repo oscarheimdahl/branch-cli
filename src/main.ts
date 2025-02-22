@@ -19,8 +19,8 @@ const branches = recentBranchesList.map((row) => {
 
 const selectedBranch = await selectBranch(branches);
 
-await checkoutBranch(selectedBranch);
+// await checkoutBranch(selectedBranch);
 
-console.log(`${currentBranch} -> ${selectedBranch}`);
+console.log(`${currentBranch} → ${selectedBranch}`);
 
 Deno.exit(0);

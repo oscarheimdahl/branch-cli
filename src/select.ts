@@ -36,8 +36,7 @@ export const selectBranch = async (branches: BranchTimeStamp[]) => {
     const res = await ask.select({
       name: "selection",
       message: title,
-      choices: [{ message: "", disabled: true }, ...choices],
-      disabledFormatter: () => "",
+      choices: choices,
       activeFormatter: (branchName: string) => {
         return (
           activePrefix +
@@ -55,9 +54,7 @@ export const selectBranch = async (branches: BranchTimeStamp[]) => {
     } as const);
 
     clearPreviousLine();
-    console.log("WE did it");
-
-    Deno.exit(0);
+    return res.selection;
   } catch {
     Deno.exit(0);
   }
