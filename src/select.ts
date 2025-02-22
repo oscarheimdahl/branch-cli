@@ -1,7 +1,6 @@
 import { Ask } from "@sallai/ask";
-import color, { green, gray, white, italic } from "@sallai/iro";
+import color, { blue, gray, white } from "@sallai/iro";
 
-const removePreviousLine = "\x1b[1A\x1b[K";
 const ask = new Ask({ prefix: "" });
 
 type BranchTimeStamp = {
@@ -10,10 +9,11 @@ type BranchTimeStamp = {
 };
 
 export const selectBranch = async (branches: BranchTimeStamp[]) => {
-  const longestNameLength = Math.max(longestBranchName(branches), 10);
+  const longestNameLength = Math.max(longestBranchName(branches), 8);
 
-  const activePrefix = color("git checkout ", green);
-  const inactivePrefix = " ".repeat("git checkout ".length);
+  const prefix = " → ";
+  const activePrefix = color(prefix, blue);
+  const inactivePrefix = " ".repeat(prefix.length);
 
   const branchTitle = color("Branch", white);
   const titleSpacing = " ".repeat(longestNameLength - "Branch".length);
@@ -40,8 +40,8 @@ export const selectBranch = async (branches: BranchTimeStamp[]) => {
       activeFormatter: (branchName: string) => {
         return (
           activePrefix +
-          color(branchName, green) +
-          color(rowMap.get(branchName)!, white)
+          color(branchName, white) +
+          color(rowMap.get(branchName)!, gray)
         );
       },
       inactiveFormatter: (branchName: string) => {

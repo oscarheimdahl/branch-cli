@@ -6,6 +6,8 @@ import {
 } from "./commands.ts";
 import { selectBranch } from "./select.ts";
 
+import color, { green, italic } from "@sallai/iro";
+
 const currentBranch = await getCurrentBranch();
 const recentBranchesList = await getRecentBranches();
 
@@ -19,8 +21,16 @@ const branches = recentBranchesList.map((row) => {
 
 const selectedBranch = await selectBranch(branches);
 
-// await checkoutBranch(selectedBranch);
-
-console.log(`${currentBranch} → ${selectedBranch}`);
+if (selectedBranch === currentBranch) {
+  console.log(`Already on ${color(selectedBranch, italic)}`);
+} else {
+  await checkoutBranch(selectedBranch);
+  console.log(
+    `${color(currentBranch, italic)} → ${color(selectedBranch, italic)} ${color(
+      "✔",
+      green
+    )}`
+  );
+}
 
 Deno.exit(0);
