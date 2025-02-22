@@ -1,4 +1,4 @@
-import * as inquirer from "@inquirer/prompts";
+import select from "@inquirer/select";
 import {
   forEachRefCmd,
   checkoutCmd,
@@ -28,7 +28,7 @@ const refRowsSplit = refRows.map((row) =>
   row.split(forEachRefCmd.seperator).slice(1)
 );
 
-const selectedBranch = await inquirer.select({
+const selectedBranch = await select({
   message: "Select branch:",
   choices: [...refRowsSplit].map((row) => ({
     name: `${row[0]} - ${row[1]}`,
