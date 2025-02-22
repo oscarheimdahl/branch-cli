@@ -37,7 +37,7 @@ export const selectBranch = async (branches: BranchTimeStamp[]) => {
       name: "selection",
       message: title,
       choices: [{ message: "", disabled: true }, ...choices],
-      disabledFormatter: () => "-",
+      disabledFormatter: () => "",
       activeFormatter: (branchName: string) => {
         return (
           activePrefix +
@@ -54,12 +54,17 @@ export const selectBranch = async (branches: BranchTimeStamp[]) => {
       },
     } as const);
 
-    console.log(removePreviousLine.repeat(4));
+    clearPreviousLine();
+    console.log("WE did it");
+
     Deno.exit(0);
   } catch {
     Deno.exit(0);
   }
 };
+
+const clearPreviousLine = () =>
+  Deno.stdout.writeSync(new TextEncoder().encode("\x1b[1A\x1b[K"));
 
 const longestBranchName = (branches: BranchTimeStamp[]) => {
   return branches.reduce((prev, curr) =>
