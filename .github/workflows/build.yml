@@ -55,8 +55,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            branch-cli-mac-intel
-            branch-cli-mac
-            branch-cli.exe
+            switch-branch-intel
+            switch-branch
+            switch-branch.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
