@@ -24,7 +24,7 @@ const selectedBranch = await selectBranch(branches);
 if (selectedBranch === currentBranch) {
   console.log(`Already on ${color(selectedBranch, italic)}`);
 } else {
-  // await checkoutBranch(selectedBranch);
+  await checkoutBranch(selectedBranch);
   console.log(
     `${color(currentBranch, italic)} → ${color(selectedBranch, italic)} ${color(
       '✔',
