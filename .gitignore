@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 # Own
-
 bin/
+.DS_Store
