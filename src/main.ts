@@ -3,10 +3,10 @@ import {
   getCurrentBranch,
   getRecentBranches,
   seperator,
-} from "./commands.ts";
-import { selectBranch } from "./select.ts";
+} from './commands.ts';
+import { selectBranch } from './select.ts';
 
-import color, { green, italic } from "@sallai/iro";
+import color, { green, italic } from '@sallai/iro';
 
 const currentBranch = await getCurrentBranch();
 const recentBranchesList = await getRecentBranches();
@@ -24,10 +24,10 @@ const selectedBranch = await selectBranch(branches);
 if (selectedBranch === currentBranch) {
   console.log(`Already on ${color(selectedBranch, italic)}`);
 } else {
-  await checkoutBranch(selectedBranch);
+  // await checkoutBranch(selectedBranch);
   console.log(
     `${color(currentBranch, italic)} → ${color(selectedBranch, italic)} ${color(
-      "✔",
+      '✔',
       green
     )}`
   );
