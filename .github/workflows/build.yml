@@ -18,24 +18,17 @@ jobs:
         with:
           deno-version: vx.x.x # Use a specific version or 'latest'
 
-      - name: Compile Mac (Intel)
-        run: deno compile --allow-env --allow-run --target x86_64-apple-darwin --output branch-cli-mac-intel main.ts
-      - name: Compile Mac (Arm)
-        run: deno compile --allow-env --allow-run --target aarch64-apple-darwin --output branch-cli-mac main.ts
-      - name: Compile Windows
-        run: deno compile --allow-env --allow-run --target x86_64-pc-windows-msvc --output branch-cli.exe main.ts
+      - name: Compile
+        run: deno task build && deno task chmod
 
       - name: Chmod
-        run: chmod +x branch-cli-mac-intel branch-cli-mac branch-cli.exe
+        run: deno task chmod
 
       - name: Upload compiled binary
         uses: actions/upload-artifact@v4
         with:
           name: deno-compiled-binary
-          path: |
-            branch-cli-mac-intel
-            branch-cli-mac
-            branch-cli.exe
+          path: bin
 
   release:
     needs: build
@@ -61,8 +54,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            branch-cli-mac-intel
-            branch-cli-mac
-            branch-cli.exe
+            bin/branch-cli-mac-intel
+            bin/branch-cli-mac
+            bin/branch-cli.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,11 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch main.ts",
+    "build-mac-intel": "deno compile --allow-env --allow-run --target x86_64-apple-darwin --output bin/branch-cli-mac-intel main.ts",
+    "build-mac": "deno compile --allow-env --allow-run --target aarch64-apple-darwin --output bin/branch-cli-mac main.ts",
+    "build-windows": "deno compile --allow-env --allow-run --target x86_64-pc-windows-msvc --output bin/branch-cli.exe main.ts",
+    "build": "deno task build-mac-intel && deno task build-mac && deno task build-windows",
+    "chmod": "chmod +x bin/*"
   },
   "imports": {
     "@inquirer/select": "npm:@inquirer/select@^4.0.9"
