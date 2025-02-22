@@ -1,17 +1,17 @@
-import select from "@inquirer/select";
+import select from '@inquirer/select';
 import {
   forEachRefCmd,
   checkoutCmd,
   handleGitError,
   currentBranchCmd,
-} from "./commands.ts";
+} from './commands.ts';
 
 const decoder = new TextDecoder();
 
 const currentBranchOutput = await currentBranchCmd.output();
 
 if (!currentBranchOutput.success) {
-  handleGitError("branch --show-current", currentBranchOutput.stderr);
+  handleGitError('branch --show-current', currentBranchOutput.stderr);
 }
 
 const currentBranch = decoder.decode(currentBranchOutput.stdout).trim();
@@ -19,17 +19,19 @@ const currentBranch = decoder.decode(currentBranchOutput.stdout).trim();
 const output = await forEachRefCmd.cmd.output();
 
 if (!output.success) {
-  handleGitError("for-each-ref", output.stderr);
+  handleGitError('for-each-ref', output.stderr);
 }
 
-const refRows = decoder.decode(output.stdout).split("\n").slice(0, -1);
+const refRows = decoder.decode(output.stdout).split('\n').slice(0, -1);
 
 const refRowsSplit = refRows.map((row) =>
   row.split(forEachRefCmd.seperator).slice(1)
 );
 
 const selectedBranch = await select({
-  message: "Select branch:",
+  message: 'Select branch:',
+  loop: false,
+  pageSize: 25,
   choices: [...refRowsSplit].map((row) => ({
     name: `${row[0]} - ${row[1]}`,
     value: row[0],
@@ -37,10 +39,10 @@ const selectedBranch = await select({
 });
 
 if (
-  typeof selectedBranch !== "string" ||
-  (typeof selectedBranch === "string" && selectedBranch.length < 1)
+  typeof selectedBranch !== 'string' ||
+  (typeof selectedBranch === 'string' && selectedBranch.length < 1)
 ) {
-  console.log("An invalid branch was selected");
+  console.log('An invalid branch was selected');
   Deno.exit(1);
 }
 
@@ -49,7 +51,7 @@ const cmd = checkoutCmd(selectedBranch);
 const output2 = await cmd.output();
 
 if (!output2.success) {
-  handleGitError("checkout", output.stderr);
+  handleGitError('checkout', output.stderr);
 }
 
 console.log(`${currentBranch} -> ${selectedBranch}`);
