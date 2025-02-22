@@ -3,7 +3,7 @@ name: Build Deno App
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
   build:
@@ -18,12 +18,15 @@ jobs:
         with:
           deno-version: vx.x.x # Use a specific version or 'latest'
 
-      - name: Compile Deno App
-        run: deno compile --allow-env --allow-run --target x86_64-apple-darwin --output branch-cli main.ts
-      - name: Compile Deno App
-        run: deno compile --allow-env --allow-run --target aarch64-apple-darwin --output branch-cli-arm main.ts
-      - name: Compile Deno App
+      - name: Compile Mac (Intel)
+        run: deno compile --allow-env --allow-run --target x86_64-apple-darwin --output branch-cli-mac-intel main.ts
+      - name: Compile Mac (Arm)
+        run: deno compile --allow-env --allow-run --target aarch64-apple-darwin --output branch-cli-mac main.ts
+      - name: Compile Windows
         run: deno compile --allow-env --allow-run --target x86_64-pc-windows-msvc --output branch-cli.exe main.ts
+
+      - name: Chmod
+        run: chmod +x branch-cli-mac-intel branch-cli-mac branch-cli.exe
 
       - name: Upload compiled binary
         uses: actions/upload-artifact@v4
