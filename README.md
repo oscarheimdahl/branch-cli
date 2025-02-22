@@ -1,6 +1,6 @@
 # Switch Branch
 
-CLI tool to preview and select recent git branches.
+CLI tool to preview and switch to recent git branches.
 
 ![demo gif](demo.gif)
 
