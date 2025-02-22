@@ -1,0 +1,29 @@
+name: Build Deno App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: vx.x.x # Use a specific version or 'latest'
+
+      - name: Compile Deno App
+        run: deno compile --unstable --allow-all --output my_app main.ts
+
+      - name: Upload compiled binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: deno-compiled-binary
+          path: my_app
