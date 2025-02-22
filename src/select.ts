@@ -1,5 +1,4 @@
 import { Ask } from '@sallai/ask';
-import select from '@inquirer/select';
 import color, { blue, gray, white } from '@sallai/iro';
 
 const ask = new Ask({ prefix: '' });

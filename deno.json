@@ -1,13 +1,9 @@
 {
   "tasks": {
-    "build-mac-intel": "deno compile --allow-env --allow-run --target x86_64-apple-darwin --output bin/switch-branch-mac-intel src/main.ts",
-    "build-mac": "deno compile --allow-env --allow-run --target aarch64-apple-darwin --output bin/switch-branch-mac src/main.ts",
-    "build-windows": "deno compile --allow-env --allow-run --target x86_64-pc-windows-msvc --output bin/switch-branch.exe src/main.ts",
-    "build": "deno task build-mac-intel && deno task build-mac && deno task build-windows",
+    "build": "deno compile --allow-env --allow-run --target aarch64-apple-darwin --output bin/switch-branch src/main.ts",
     "chmod": "chmod +x bin/*"
   },
   "imports": {
-    "@inquirer/select": "npm:@inquirer/select@^4.0.9",
     "@sallai/ask": "jsr:@sallai/ask@^2.0.2",
     "@sallai/iro": "jsr:@sallai/iro@^1.0.4"
   }

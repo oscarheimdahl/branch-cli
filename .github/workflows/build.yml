@@ -55,8 +55,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            switch-branch-intel
             switch-branch
-            switch-branch.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
