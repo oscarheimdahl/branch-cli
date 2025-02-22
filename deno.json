@@ -7,6 +7,7 @@
     "chmod": "chmod +x bin/*"
   },
   "imports": {
-    "@inquirer/select": "npm:@inquirer/select@^4.0.9"
+    "@sallai/ask": "jsr:@sallai/ask@^2.0.2",
+    "@sallai/iro": "jsr:@sallai/iro@^1.0.4"
   }
 }
