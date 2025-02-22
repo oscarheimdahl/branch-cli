@@ -27,7 +27,7 @@ jobs:
       - name: Upload compiled binary
         uses: actions/upload-artifact@v4
         with:
-          name: deno-compiled-binary
+          name: compiled-binaries
           path: bin
 
   release:
@@ -37,10 +37,10 @@ jobs:
       contents: write
 
     steps:
-      - name: Download compiled binary
+      - name: Download compiled binaries
         uses: actions/download-artifact@v4
         with:
-          name: deno-compiled-binary
+          name: compiled-binaries
           path: .
 
       - name: Create GitHub Release
@@ -54,8 +54,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            bin/branch-cli-mac-intel
-            bin/branch-cli-mac
-            bin/branch-cli.exe
+            branch-cli-mac-intel
+            branch-cli-mac
+            branch-cli.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
