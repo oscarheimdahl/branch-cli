@@ -19,7 +19,7 @@ jobs:
           deno-version: vx.x.x # Use a specific version or 'latest'
 
       - name: Compile
-        run: deno task build && deno task chmod
+        run: deno task build
 
       - name: Chmod
         run: deno task chmod

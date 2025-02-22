@@ -29,7 +29,19 @@ const refRowsSplit = refRows.map((row) =>
 );
 
 const selectedBranch = await select({
-  message: 'Select branch:',
+  message: 'Select branch to checkout\n  Branch        Last visited',
+  theme: {
+    helpMode: 'never',
+    icon: {
+      cursor: '→',
+    },
+    style: {
+      highlight: (str) => str,
+      answer: (str) => '123' + str,
+      key: (str) => '123' + str,
+    },
+    prefix: '',
+  },
   loop: false,
   pageSize: 25,
   choices: [...refRowsSplit].map((row) => ({
