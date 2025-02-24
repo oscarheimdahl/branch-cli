@@ -1,13 +1,18 @@
 import { checkoutBranch, getRecentBranches, seperator } from './commands.ts';
 import { selectBranch } from './select.ts';
 
-let accent = 0;
-const accentFlags = ['-c', '--color', '-a', '--accent'];
-const accentFlag = accentFlags.includes(Deno.args.at(0) ?? '');
-const accentArg = parseInt(Deno.args.at(1) ?? '');
-if (accentFlag && !isNaN(accentArg)) {
-  accent = accentArg;
+function parseArgs(flags: string[]) {
+  const args = Deno.args;
+  for (let i = 0; i < args.length; i++) {
+    if (flags.includes(args[i])) {
+      const value = parseInt(args[i + 1]);
+      if (!isNaN(value)) return value;
+    }
+  }
 }
+
+const bg = parseArgs(['-b', '--bg', 'background']);
+const txt = parseArgs(['-t', '--txt', '--text']);
 
 const recentBranchesList = await getRecentBranches();
 
@@ -19,7 +24,7 @@ const branches = recentBranchesList.map((row) => {
   };
 });
 
-const selectedBranch = await selectBranch(branches, accent);
+const selectedBranch = await selectBranch(branches, bg, txt);
 
 await checkoutBranch(selectedBranch);
 

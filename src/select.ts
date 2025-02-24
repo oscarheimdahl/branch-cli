@@ -3,6 +3,7 @@
 import prompts from 'prompts';
 
 import {
+  bgBlack,
   bgBlue,
   bgCyan,
   bgGreen,
@@ -11,8 +12,14 @@ import {
   bgWhite,
   bgYellow,
   black,
+  blue,
+  cyan,
   gray,
+  green,
+  magenta,
+  red,
   white,
+  yellow,
 } from 'kleur/colors';
 
 type BranchTimeStamp = {
@@ -20,20 +27,44 @@ type BranchTimeStamp = {
   lastCheckedOut: string;
 };
 
-const accents = [bgBlue, bgWhite, bgGreen, bgYellow, bgMagenta, bgCyan, bgRed];
+const backgrounds = [
+  (str: string) => str,
+  bgWhite,
+  bgBlack,
+  bgBlue,
+  bgGreen,
+  bgYellow,
+  bgMagenta,
+  bgCyan,
+  bgRed,
+];
+
+const texts = [
+  (str: string) => str,
+  white,
+  black,
+  blue,
+  green,
+  yellow,
+  magenta,
+  cyan,
+  red,
+];
 
 export const selectBranch = async (
   branches: BranchTimeStamp[],
-  accent: number = 0
+  bg: number = 3,
+  txt: number = 2
 ) => {
   const longestNameLength = Math.max(longestBranchName(branches), 15);
 
   const branchTitle = ' Branch';
   const titleSpacing = ' '.repeat(longestNameLength - branchTitle.length + 3);
   const lastVisitedTitle = 'Last visited ';
-  const accentColor = accents[accent] ?? accents[0];
-  const title = accentColor(
-    black(`${branchTitle}${titleSpacing}${lastVisitedTitle}`)
+  const bgColor = backgrounds[bg] ?? backgrounds[0];
+  const txtColor = texts[txt] ?? texts[0];
+  const title = bgColor(
+    txtColor(`${branchTitle}${titleSpacing}${lastVisitedTitle}`)
   );
 
   const buildRow = (name: string, lastCheckedOut: string) => {
