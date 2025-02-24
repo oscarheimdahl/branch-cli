@@ -1,63 +1,67 @@
-import { Ask } from '@sallai/ask';
-import color, { blue, gray, white } from '@sallai/iro';
+// deno-lint-ignore-file ban-ts-comment
+// @deno-types="npm:@types/prompts"
+import prompts from 'prompts';
 
-const ask = new Ask({ prefix: '' });
+import {
+  bgBlue,
+  bgCyan,
+  bgGreen,
+  bgMagenta,
+  bgRed,
+  bgWhite,
+  bgYellow,
+  black,
+  gray,
+  white,
+} from 'kleur/colors';
 
 type BranchTimeStamp = {
   name: string;
   lastCheckedOut: string;
 };
 
-export const selectBranch = async (branches: BranchTimeStamp[]) => {
-  const longestNameLength = Math.max(longestBranchName(branches), 8);
+const accents = [bgBlue, bgWhite, bgGreen, bgYellow, bgMagenta, bgCyan, bgRed];
 
-  const prefix = ' → ';
-  const activePrefix = color(prefix, blue);
-  const inactivePrefix = ' '.repeat(prefix.length);
+export const selectBranch = async (
+  branches: BranchTimeStamp[],
+  accent: number = 0
+) => {
+  const longestNameLength = Math.max(longestBranchName(branches), 15);
 
-  const branchTitle = color('Branch', white);
-  const titleSpacing = ' '.repeat(longestNameLength - 'Branch'.length + 1);
-  const lastVisitedTitle = color('Last visited', white);
-  const title = `${inactivePrefix}${branchTitle}${titleSpacing}${lastVisitedTitle}`;
+  const branchTitle = ' Branch';
+  const titleSpacing = ' '.repeat(longestNameLength - branchTitle.length + 3);
+  const lastVisitedTitle = 'Last visited ';
+  const accentColor = accents[accent] ?? accents[0];
+  const title = accentColor(
+    black(`${branchTitle}${titleSpacing}${lastVisitedTitle}`)
+  );
 
-  const rowMap = new Map<string, string>();
   const buildRow = (name: string, lastCheckedOut: string) => {
-    const spacing = ' '.repeat(longestNameLength - name.length + 1);
-    rowMap.set(name, spacing + lastCheckedOut);
-    return name;
+    const spacing = ' '.repeat(longestNameLength - name.length + 2);
+
+    return white('  ' + name) + gray(spacing) + gray(lastCheckedOut);
   };
 
-  const choices = branches.map((branch) => ({
-    message: buildRow(branch.name, branch.lastCheckedOut),
-    value: branch.name,
-  }));
+  const res = await prompts({
+    type: 'select',
+    name: 'branch',
+    message: 'git checkout',
+    instructions: false,
+    hint: title,
+    active: 'true',
+    choices: branches.map((branch) => ({
+      title: buildRow(branch.name, branch.lastCheckedOut),
+      value: branch.name,
+    })),
+    onRender: function () {
+      // @ts-ignore
+      this.msg = '';
+    },
+  });
 
-  try {
-    const res = await ask.select({
-      name: 'selection',
-      message: title,
-      choices: choices,
-      activeFormatter: (branchName: string) => {
-        return (
-          activePrefix +
-          color(branchName, white) +
-          color(rowMap.get(branchName)!, gray)
-        );
-      },
-      inactiveFormatter: (branchName: string) => {
-        return (
-          inactivePrefix +
-          color(branchName, gray) +
-          color(rowMap.get(branchName)!, gray)
-        );
-      },
-    } as const);
+  clearPreviousLine();
 
-    clearPreviousLine();
-    return res.selection;
-  } catch {
-    Deno.exit(0);
-  }
+  return res.branch;
 };
 
 const clearPreviousLine = () =>

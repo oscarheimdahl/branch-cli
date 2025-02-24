@@ -18,35 +18,27 @@ export const currentBranchCmd = new Deno.Command('git', {
   args: ['branch', '--show-current'],
 });
 
-export const handleGitError = (
-  cmdName: string,
-  stderr: Uint8Array<ArrayBuffer>
-) => {
-  console.log(`An error occurred running 'git ${cmdName}':\n`);
-  console.log(new TextDecoder().decode(stderr));
-  console.log('Exiting...');
+export const handleGitError = (stderr: Uint8Array<ArrayBuffer>) => {
+  Deno.stdout.writeSync(stderr);
   Deno.exit(1);
 };
-
-// running
 
 const decoder = new TextDecoder();
 
 export const getCurrentBranch = async () => {
   const currentBranchOutput = await currentBranchCmd.output();
-  if (!currentBranchOutput.success)
-    handleGitError('branch --show-current', currentBranchOutput.stderr);
+  if (!currentBranchOutput.success) handleGitError(currentBranchOutput.stderr);
   return decoder.decode(currentBranchOutput.stdout).trim();
 };
 
 export const getRecentBranches = async () => {
   const output = await forEachRefCmd.output();
-  if (!output.success) handleGitError('for-each-ref', output.stderr);
+  if (!output.success) handleGitError(output.stderr);
   return decoder.decode(output.stdout).split('\n').slice(0, -1);
 };
 
 export const checkoutBranch = async (selectedBranch: string) => {
   const cmd = checkoutCmd(selectedBranch);
   const output2 = await cmd.output();
-  if (!output2.success) handleGitError('checkout', output2.stderr);
+  if (!output2.success) handleGitError(output2.stderr);
 };

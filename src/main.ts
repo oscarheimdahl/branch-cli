@@ -1,17 +1,15 @@
-import {
-  checkoutBranch,
-  getCurrentBranch,
-  getRecentBranches,
-  seperator,
-} from './commands.ts';
+import { checkoutBranch, getRecentBranches, seperator } from './commands.ts';
 import { selectBranch } from './select.ts';
 
-import color, { green, italic } from '@sallai/iro';
+let accent = 0;
+const accentFlags = ['-c', '--color', '-a', '--accent'];
+const accentFlag = accentFlags.includes(Deno.args.at(0) ?? '');
+const accentArg = parseInt(Deno.args.at(1) ?? '');
+if (accentFlag && !isNaN(accentArg)) {
+  accent = accentArg;
+}
 
-const [currentBranch, recentBranchesList] = await Promise.all([
-  getCurrentBranch(),
-  getRecentBranches(),
-]);
+const recentBranchesList = await getRecentBranches();
 
 const branches = recentBranchesList.map((row) => {
   const splitBranchRow = row.split(seperator).slice(1);
@@ -21,18 +19,8 @@ const branches = recentBranchesList.map((row) => {
   };
 });
 
-const selectedBranch = await selectBranch(branches);
+const selectedBranch = await selectBranch(branches, accent);
 
-if (selectedBranch === currentBranch) {
-  console.log(`Already on ${color(selectedBranch, italic)}`);
-} else {
-  await checkoutBranch(selectedBranch);
-  console.log(
-    `${color(currentBranch, italic)} → ${color(selectedBranch, italic)} ${color(
-      '✔',
-      green
-    )}`
-  );
-}
+await checkoutBranch(selectedBranch);
 
 Deno.exit(0);
