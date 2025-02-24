@@ -3,7 +3,7 @@ export const forEachRefCmd = new Deno.Command('git', {
   args: [
     'for-each-ref',
     '--sort=-committerdate',
-    '--count=10',
+    '--count=20',
     'refs/heads',
     `--format=${seperator}%(refname:short)${seperator}%(committerdate:relative)`,
   ],

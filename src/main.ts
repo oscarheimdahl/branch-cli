@@ -8,8 +8,10 @@ import { selectBranch } from './select.ts';
 
 import color, { green, italic } from '@sallai/iro';
 
-const currentBranch = await getCurrentBranch();
-const recentBranchesList = await getRecentBranches();
+const [currentBranch, recentBranchesList] = await Promise.all([
+  getCurrentBranch(),
+  getRecentBranches(),
+]);
 
 const branches = recentBranchesList.map((row) => {
   const splitBranchRow = row.split(seperator).slice(1);
