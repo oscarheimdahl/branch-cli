@@ -1,6 +1,6 @@
 # Switch Branch
 
-CLI tool to preview and select recent git branches.
+CLI tool to preview and switch to recent git branches.
 
 ![demo gif](demo.gif)
 
@@ -8,7 +8,7 @@ CLI tool to preview and select recent git branches.
 
 - Go to [releases](https://github.com/oscarheimdahl/switch-branch/releases) and download the latest version.
 - Make the binary executable: `chmod +x switch-branch`
-- Move the binary to your path: `mv switch-branch /usr/local/bin`
+- Include it in your path, one way: `mv switch-branch /usr/local/bin`
 - Done! ✅
 
 ## How it works
