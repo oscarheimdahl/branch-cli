@@ -92,6 +92,7 @@ export const selectBranch = async (
 
   clearPreviousLine();
 
+  if (typeof res.branch !== 'string') Deno.exit(0);
   return res.branch;
 };
 
