@@ -130,6 +130,7 @@ const handleSelectKeys = (keyCode: string) => {
 };
 
 const cleanup = (exit: boolean = false) => {
+  writer.clear();
   writeStdOut(keyCodes.showCursor);
   Deno.stdin.setRaw(false);
   if (exit) Deno.exit();
