@@ -7,5 +7,5 @@ export const color = (str: string, i: number) => {
 const te = new TextEncoder();
 
 export const write = (str: string) => {
-  Deno.stdout.write(te.encode(str));
+  Deno.stdout.writeSync(te.encode(str));
 };
