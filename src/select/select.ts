@@ -1,5 +1,10 @@
 import { keyCodes } from './keyCodes.ts';
-import { BranchTimeStamp, longestBranchName, SelectOption } from './utils.ts';
+import {
+  BranchTimeStamp,
+  longestBranchName,
+  longestCommitLength,
+  SelectOption,
+} from './utils.ts';
 import { color, writer, writeStdOut } from './writeHelpers.ts';
 
 const rowGap = ' '.repeat(2);
@@ -18,11 +23,7 @@ function render(frames: number) {
 
   writer.write(
     '╭' +
-      ('─'.repeat(boxPadding - 1) +
-        ' ' +
-        title +
-        ' ' +
-        '─'.repeat(boxPadding)) +
+      ('─'.repeat(boxPadding - 1) + ' ' + title + '─'.repeat(boxPadding)) +
       '╮' +
       '\n'
   );
@@ -52,15 +53,16 @@ export async function selectBranch(
   c?: number
 ): Promise<string | undefined> {
   if (c !== undefined) branchNameColor = c;
-  const longestNameLength = Math.max(longestBranchName(branches), 15);
-
-  buildTitle(longestNameLength);
-  buildOptions(branches, longestNameLength);
-
   Deno.stdin.setRaw(true, { cbreak: true });
+
+  const longestNameLength = Math.max(longestBranchName(branches), 15);
+  const longestLastCommitLength = longestCommitLength(branches);
+
+  title = buildTitle(longestNameLength, longestLastCommitLength);
+  options = buildOptions(branches, longestNameLength);
+
   const decoder = new TextDecoder();
   const buf = new Uint8Array(3);
-
   let frames = 0;
   while (true) {
     render(frames);
@@ -82,21 +84,26 @@ export async function selectBranch(
   return branches[selectedIndex].name;
 }
 
-const buildTitle = (longestNameLength: number) => {
+const buildTitle = (
+  longestNameLength: number,
+  longestLastCommitLength: number
+) => {
   const branchTitle = 'Branch';
   const titleSpacing =
     ' ' +
     '─'.repeat(longestNameLength - branchTitle.length + rowGap.length - 2) +
     ' ';
   const lastVisitedTitle = 'Last commit';
-  title = `${branchTitle}${titleSpacing}${lastVisitedTitle}`;
+  const lastCommitSpacing =
+    ' ' + '─'.repeat(longestLastCommitLength - lastVisitedTitle.length - 1);
+  return `${branchTitle}${titleSpacing}${lastVisitedTitle}${lastCommitSpacing}`;
 };
 
 const buildOptions = (
   branches: BranchTimeStamp[],
   longestNameLength: number
 ) => {
-  options = branches.map((b) => {
+  return branches.map((b) => {
     const spacing = ' '.repeat(longestNameLength - b.name.length) + rowGap;
 
     const option = b.name + spacing + b.lastCommit;
