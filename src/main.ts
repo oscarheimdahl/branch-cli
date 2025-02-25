@@ -1,5 +1,5 @@
 import { checkoutBranch, getRecentBranches, seperator } from './commands.ts';
-import { selectBranch } from './select.ts';
+import { selectBranch } from './select/select.ts';
 
 function parseArgs(flags: string[]) {
   const args = Deno.args;
@@ -11,8 +11,8 @@ function parseArgs(flags: string[]) {
   }
 }
 
-const bg = parseArgs(['-b', '--bg', 'background']);
-const txt = parseArgs(['-t', '--txt', '--text']);
+let c = parseArgs(['-c', '--color']);
+if (c && (c < 0 || c > 255)) c = undefined;
 
 const recentBranchesList = await getRecentBranches();
 
@@ -20,12 +20,11 @@ const branches = recentBranchesList.map((row) => {
   const splitBranchRow = row.split(seperator).slice(1);
   return {
     name: splitBranchRow[0],
-    lastCheckedOut: splitBranchRow[1],
+    lastCommit: splitBranchRow[1],
   };
 });
 
-const selectedBranch = await selectBranch(branches, bg, txt);
+const selectedBranch = await selectBranch(branches, c);
 
+if (!selectedBranch) Deno.exit(0);
 await checkoutBranch(selectedBranch);
-
-Deno.exit(0);

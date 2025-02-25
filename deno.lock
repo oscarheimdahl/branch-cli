@@ -1,9 +1,15 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@sallai/iro@^1.0.4": "1.0.4",
     "npm:@types/prompts@*": "2.4.9",
     "npm:kleur@^4.1.5": "4.1.5",
     "npm:prompts@^2.4.2": "2.4.2"
+  },
+  "jsr": {
+    "@sallai/iro@1.0.4": {
+      "integrity": "e14f39c7b80e80994788a8542b2c4983554fd4bb6d2f2a09471327f9cf37ee36"
+    }
   },
   "npm": {
     "@types/node@22.10.1": {
@@ -41,6 +47,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@sallai/iro@^1.0.4",
       "npm:kleur@^4.1.5",
       "npm:prompts@^2.4.2"
     ]
