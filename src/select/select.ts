@@ -5,47 +5,74 @@ import {
   longestCommitLength,
   SelectOption,
 } from './utils.ts';
-import { color, writer, writeStdOut } from './writeHelpers.ts';
+import { color, write } from './writeHelpers.ts';
 
 const rowGap = ' '.repeat(2);
 const boxPadding = 2;
 
+let selectedIndex = 0;
+let previousSelectedIndex = 0;
 let options: SelectOption[] = [];
 let longestOption = 0;
-let selectedIndex = 0;
 let title = '';
 let branchNameColor = 15; // 120
 
-function render(frames: number) {
-  if (frames !== 0) {
-    writer.clear();
-  }
+function renderOption(i: number) {
+  const option = options[i];
+  const selected = selectedIndex === i;
+  let leftLine = '│';
+  if (i === 0) leftLine = '↑';
+  if (i === 1) leftLine = '↓';
 
-  writer.write(
+  const optionLength =
+    option.name.length + option.spacing.length + option.lastCommit.length;
+  write(leftLine + ' '.repeat(boxPadding));
+  write(color(option.name, selected ? branchNameColor : 8));
+  write(option.spacing);
+  write(color(option.lastCommit, selected ? 15 : 8));
+  write(
+    ' '.repeat(longestOption - optionLength) + ' '.repeat(boxPadding) + '│\n'
+  );
+}
+
+function renderInital() {
+  write(
     '╭' +
       ('─'.repeat(boxPadding - 1) + ' ' + title + '─'.repeat(boxPadding)) +
       '╮' +
       '\n'
   );
+  for (let i = 0; i < options.length; i++) {
+    renderOption(i);
+  }
 
-  options.forEach((option, i) => {
-    let leftLine = '│';
-    if (i === 0) leftLine = '↑';
-    if (i === 1) leftLine = '↓';
-    const selected = selectedIndex === i;
-    const optionLength =
-      option.name.length + option.spacing.length + option.lastCommit.length;
-    writer.write(leftLine + ' '.repeat(boxPadding));
-    writer.write(color(option.name, selected ? branchNameColor : 8));
-    writer.write(option.spacing);
-    writer.write(color(option.lastCommit, selected ? 15 : 8));
-    writer.write(
-      ' '.repeat(longestOption - optionLength) + ' '.repeat(boxPadding) + '│\n'
-    );
-  });
+  write('╰' + '─'.repeat(longestOption + boxPadding * 2) + '╯' + '\n');
+  write(keyCodes.hideCursor);
 
-  writer.write('╰' + '─'.repeat(longestOption + boxPadding * 2) + '╯' + '\n');
-  writer.write(keyCodes.hideCursor);
+  for (let i = 0; i < options.length + 1; i++) {
+    write(keyCodes.cursorUp);
+  }
+}
+
+function renderUpdatedRow() {
+  const up = selectedIndex < previousSelectedIndex;
+
+  if (up) {
+    write(keyCodes.clearLine);
+    renderOption(previousSelectedIndex);
+    write(keyCodes.cursorUp);
+    write(keyCodes.cursorUp);
+    renderOption(selectedIndex);
+    write(keyCodes.cursorUp);
+  }
+
+  if (!up) {
+    write(keyCodes.clearLine);
+    renderOption(previousSelectedIndex);
+    write(keyCodes.clearLine);
+    renderOption(selectedIndex);
+    write(keyCodes.cursorUp);
+  }
 }
 
 export async function selectBranch(
@@ -64,8 +91,8 @@ export async function selectBranch(
   const decoder = new TextDecoder();
   const buf = new Uint8Array(3);
   let frames = 0;
+  renderInital();
   while (true) {
-    render(frames);
     frames++;
     const n = await Deno.stdin.read(buf);
     if (n === null) continue;
@@ -79,6 +106,8 @@ export async function selectBranch(
       // key other than arrow and enter press, cancelling
       return undefined;
     }
+    if (frames > 0 && selectedIndex !== previousSelectedIndex)
+      renderUpdatedRow();
   }
 
   return branches[selectedIndex].name;
@@ -113,11 +142,12 @@ const buildOptions = (
 };
 
 const handleArrowKeys = (keyCode: string) => {
+  previousSelectedIndex = selectedIndex;
   if (keyCode === keyCodes.up) selectedIndex--;
   else if (keyCode === keyCodes.down) selectedIndex++;
   else return false;
-  if (selectedIndex < 0) selectedIndex = options.length - 1;
-  if (selectedIndex > options.length - 1) selectedIndex = 0;
+  if (selectedIndex < 0) selectedIndex = 0;
+  if (selectedIndex > options.length - 1) selectedIndex = options.length - 1;
   return true;
 };
 
@@ -130,8 +160,10 @@ const handleSelectKeys = (keyCode: string) => {
 };
 
 const cleanup = (exit: boolean = false) => {
-  writer.clear();
-  writeStdOut(keyCodes.showCursor);
+  write(`\x1b[${options.length - selectedIndex}B`);
+  write(`\x1b[${options.length + 1}A`);
+  write(`\x1b[J`);
+  write(keyCodes.showCursor);
   Deno.stdin.setRaw(false);
   if (exit) Deno.exit();
 };

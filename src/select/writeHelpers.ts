@@ -6,20 +6,6 @@ export const color = (str: string, i: number) => {
 
 const te = new TextEncoder();
 
-export const writer = {
-  writtenLines: 0,
-  write: function (str: string) {
-    writeStdOut(str);
-    str.includes('\n') && this.writtenLines++;
-  },
-  clear: function () {
-    Array.from({ length: this.writtenLines }).forEach(() => {
-      writeStdOut(keyCodes.clearPreviousLine);
-    });
-    this.writtenLines = 0;
-  },
-};
-
-export const writeStdOut = (str: string) => {
+export const write = (str: string) => {
   Deno.stdout.write(te.encode(str));
 };
