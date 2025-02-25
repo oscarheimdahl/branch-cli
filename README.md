@@ -24,30 +24,12 @@ git checkout {selectedBranch}
 
 You can change color of the header (because of course you can...)
 
-#### Header background color
+`-b` or `--bg` or `--background` followed by [0-255](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
 
-`-b` or `--bg` or `--background` followed by a number
-
-#### Header text color
-
-`-t` or `--txt` or `--text` followed by a number
-
-#### Available colors
-
-- 0 (no color)
-- 1 (white)
-- 2 (black)
-- 3 (blue)
-- 4 (green)
-- 5 (yellow)
-- 6 (magenta)
-- 7 (cyan)
-- 8 (red)
-
-### Example
+For example:
 
 ```
-switch-branch -b 1 -t 2
+switch-branch -c 120
 ```
 
-Will yield a header with a white background and black text.
+Will use a fresh minty green for your selected branch. 👌
