@@ -1,7 +1,9 @@
 {
   "tasks": {
     "build": "deno compile --allow-env --allow-run --target aarch64-apple-darwin --output bin/switch-branch src/main.ts",
-    "chmod": "chmod +x bin/*"
+    "chmod": "chmod +x bin/*",
+    "dev": "deno run -A src/main.ts",
+    "install": "./install.sh"
   },
   "imports": {
     "@sallai/iro": "jsr:@sallai/iro@^1.0.4",

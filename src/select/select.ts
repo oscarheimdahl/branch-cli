@@ -9,13 +9,15 @@ import { color, write } from './writeHelpers.ts';
 
 const rowGap = ' '.repeat(2);
 const boxPadding = 2;
+const branchTitle = 'Branch';
+const lastCommitTitle = 'Last commit ';
 
 let selectedIndex = 0;
 let previousSelectedIndex = 0;
 let options: SelectOption[] = [];
 let longestOption = 0;
 let title = '';
-let branchNameColor = 15; // 120
+let branchNameColor = 15;
 
 function renderOption(i: number) {
   const option = options[i];
@@ -24,12 +26,14 @@ function renderOption(i: number) {
   if (i === 0) leftLine = '↑';
   if (i === 1) leftLine = '↓';
 
-  const optionLength =
-    option.name.length + option.spacing.length + option.lastCommit.length;
+  const name = option.name;
+  const lastCommit = option.lastCommit;
+
+  const optionLength = name.length + option.spacing.length + lastCommit.length;
   write(leftLine + ' '.repeat(boxPadding));
-  write(color(option.name, selected ? branchNameColor : 8));
+  write(color(name, selected ? branchNameColor : 8));
   write(option.spacing);
-  write(color(option.lastCommit, selected ? 15 : 8));
+  write(color(lastCommit, selected ? 15 : 8));
   write(
     ' '.repeat(longestOption - optionLength) + ' '.repeat(boxPadding) + '│\n'
   );
@@ -77,16 +81,19 @@ function renderUpdatedRow() {
 
 export async function selectBranch(
   branches: BranchTimeStamp[],
-  c?: number
+  c: number
 ): Promise<string | undefined> {
-  if (c !== undefined) branchNameColor = c;
+  branchNameColor = c;
   Deno.stdin.setRaw(true, { cbreak: true });
 
   const longestNameLength = Math.max(longestBranchName(branches), 15);
-  const longestLastCommitLength = longestCommitLength(branches);
+  const longestLastCommitLength = longestCommitLength([
+    { name: '', lastCommit: lastCommitTitle },
+    ...branches,
+  ]);
 
-  title = buildTitle(longestNameLength, longestLastCommitLength);
   options = buildOptions(branches, longestNameLength);
+  title = buildTitle(longestNameLength, longestLastCommitLength);
 
   const decoder = new TextDecoder();
   const buf = new Uint8Array(3);
@@ -117,15 +124,14 @@ const buildTitle = (
   longestNameLength: number,
   longestLastCommitLength: number
 ) => {
-  const branchTitle = 'Branch';
   const titleSpacing =
     ' ' +
     '─'.repeat(longestNameLength - branchTitle.length + rowGap.length - 2) +
     ' ';
-  const lastVisitedTitle = 'Last commit';
-  const lastCommitSpacing =
-    ' ' + '─'.repeat(longestLastCommitLength - lastVisitedTitle.length - 1);
-  return `${branchTitle}${titleSpacing}${lastVisitedTitle}${lastCommitSpacing}`;
+  const lastCommitSpacing = '─'.repeat(
+    longestLastCommitLength - lastCommitTitle.length
+  );
+  return `${branchTitle}${titleSpacing}${lastCommitTitle}${lastCommitSpacing}`;
 };
 
 const buildOptions = (
@@ -134,6 +140,10 @@ const buildOptions = (
 ) => {
   return branches.map((b) => {
     const spacing = ' '.repeat(longestNameLength - b.name.length) + rowGap;
+
+    // Ensure lastCommit is at least as long as the heading, for correct box drawing, should probably be done for branch heading too
+    if (b.lastCommit.length < lastCommitTitle.length)
+      b.lastCommit = b.lastCommit.padEnd(lastCommitTitle.length, ' ');
 
     const option = b.name + spacing + b.lastCommit;
     longestOption = Math.max(longestOption, option.length);

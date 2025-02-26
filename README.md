@@ -22,6 +22,8 @@ git checkout {selectedBranch}
 
 ## Flags
 
+### -b
+
 You can change color of the header (because of course you can...)
 
 `-b` or `--bg` or `--background` followed by [0-255](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
@@ -33,3 +35,9 @@ switch-branch -c 120
 ```
 
 Will use a fresh minty green for your selected branch. 👌
+
+### -o
+
+List branches on remote _origin_ instead of local
+
+`-o` or `--origin` or `-r` or `--remote`

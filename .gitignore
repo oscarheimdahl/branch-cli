@@ -132,3 +132,4 @@ dist
 # Own
 bin/
 .DS_Store
+install.sh
