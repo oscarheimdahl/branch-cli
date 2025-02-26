@@ -24,7 +24,7 @@ git checkout {selectedBranch}
 
 You can change color of the header (because of course you can...)
 
-`-c` or `--colo` followed by [0-255](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
+`-c` or `--color` followed by [0-255](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
 
 For example:
 
